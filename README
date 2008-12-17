@@ -1,0 +1,12 @@
+python-disqus
+
+Description:
+  A Python interface to the DISQUS API.
+
+TODO extend
+
+More information:
+    http://github.com/devin/python-disqus
+    
+Author:
+    Devin Naquin, dnaquin@gmail.com

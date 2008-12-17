@@ -7,6 +7,7 @@ Created by Devin Naquin on 2008-12-17.
 Copyright (c) 2008. All rights reserved.
 """
 
+from datetime import datetime, timedelta
 import time, unittest
 
 
@@ -15,10 +16,27 @@ class TimedCache:
 
 	def __init__(self, producer, seconds=60):
 		self.producer = producer
-		self.seconds = seconds
+		if seconds and seconds>0:
+			self.delta = timedelta(seconds=seconds)
+		else:
+			self.delta = None
+
+		self.store = {}
 
 	def get(self, key):
-		pass
+		now = datetime.now()
+
+		# If key not in cache or cache has expiration time and key expired.
+		# Compute and cache result.
+		if key not in self.store or \
+				(self.delta and self.store[key][0] + self.delta < now):
+			result = self.producer(key)
+			
+			self.store[key] = (now, result)
+			
+			return result
+		else:
+			return self.store[key][1]
 
 
 class TimedCacheTests(unittest.TestCase):		

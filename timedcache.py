@@ -11,6 +11,7 @@ from datetime import datetime, timedelta
 import time, unittest
 
 
+# TODO threadsafe.
 class TimedCache:
 
 

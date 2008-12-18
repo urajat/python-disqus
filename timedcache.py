@@ -42,6 +42,7 @@ class TimedCache:
 
 class TimedCacheTests(unittest.TestCase):		
 
+
 	def setUp(self):
 		def make_producer():
 			counter = [0]

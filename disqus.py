@@ -12,7 +12,7 @@ import os
 import unittest
 
 
-class Api:
+class Api(object):
 
 
 	def __init__(self):

@@ -12,7 +12,7 @@ import time, unittest
 
 
 # TODO threadsafe.
-class TimedCache:
+class TimedCache(object):
 
 
 	def __init__(self, producer, seconds=60):

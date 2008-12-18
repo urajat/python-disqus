@@ -28,7 +28,8 @@ class Api(object):
 
 
 	def __init__(self, forum_key=None, user_key=None):
-		pass
+		self.forum_key = forum_key
+		self.user_key = user_key
 
 
 class ApiTests(unittest.TestCase):

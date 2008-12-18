@@ -9,27 +9,31 @@ Copyright (c) 2008. All rights reserved.
 
 import unittest, warnings
 
-# TODO abstract into same method.
-# TODO conditionally warn if key not set. how to do with decorator?
-def user_key_required(f):
-	def wrapped(*args, **kwargs):
-		warnings.warn("method requires a user api key set in the Api class's constructor.")
-		return f(*args, **kwargs)
-	return wrapped
-		
-def forum_key_required(f):
-	def wrapped(*args, **kwargs):
-		warnings.warn("method requires a forum api key set in the Api class's constructor.")
-		return f(*args, **kwargs)
-	return wrapped
-
 
 class Api(object):
+
+
+	def key_required(key):
+		def decorator(f):
+			def wrapped(*args, **kwargs):
+				self = args[0]
+				if not getattr(self, '%s_key' % key):					
+					warnings.warn("method requires a %s api key set in the Api class's constructor." % key)
+				return f(*args, **kwargs)
+			return wrapped
+		return decorator
+
+	user_key_required 	= key_required('user')
+	forum_key_required	= key_required('forum')
 
 
 	def __init__(self, forum_key=None, user_key=None):
 		self.forum_key = forum_key
 		self.user_key = user_key
+
+	@user_key_required
+	def user_method(self):
+		print 'user_method'
 
 
 class ApiTests(unittest.TestCase):

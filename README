@@ -4,6 +4,7 @@ Description:
   A Python interface to the DISQUS API.
 
 TODO extend
+TODO requires simplejson
 
 More information:
     http://github.com/devin/python-disqus

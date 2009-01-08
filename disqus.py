@@ -9,11 +9,13 @@ Copyright (c) 2008. All rights reserved.
 
 import unittest, warnings
 
-import simplejson
+import simplejson as json
 
 
 class Api(object):
-
+	"""
+	TODO write
+	"""
 
 	def key_required(key):
 		def decorator(f):
@@ -81,6 +83,10 @@ class Post(object):
 
 
 class DisqusFetcher(object):
+	"""
+	TODO write
+	returns JSON
+	"""
 
 
 	def __init__(self):
@@ -90,7 +96,7 @@ class DisqusFetcher(object):
 	def get_forum_list(self):
 		pass
 
-	def get_forum_api_key(self):
+	def get_forum_api_key(self, forum_id):
 		pass
 
 	def get_thread_list(self):
@@ -118,6 +124,44 @@ class DisqusFetcher(object):
 
 class ApiTests(unittest.TestCase):
 
+
+	class MockFetcher(DisqusFetcher):
+
+		def __init__(self, forums, threads, posts):
+			self.forums		= forums
+			self.threads	= threads
+			self.posts		= posts
+
+		# get methods
+		def get_forum_list(self):
+			serializable = [forum.__dict__ for forum in self.forums]
+
+			return json.dumps(serializable)
+
+		def get_forum_api_key(self, forum_id):
+			pass
+
+		def get_thread_list(self):
+			pass
+
+		def get_thread_by_url(self):
+			pass
+
+		def get_thread_posts(self):
+			pass
+
+		def get_num_posts(self):
+			pass
+
+		# post methods
+		def create_post(self):
+			pass
+
+		def thread_by_identifier(self):
+			pass
+
+		def update_thread(self):
+			pass
 
 	def setUp(self):
 		pass

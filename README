@@ -1,13 +1,15 @@
 python-disqus
 
 Description:
-  A Python interface to the DISQUS API.
+    A Python interface to the DISQUS API.
 
-TODO extend
-TODO requires simplejson
+Dependencies:
+    Python 2.6 or greater (for json)
 
 More information:
-    http://github.com/devin/python-disqus
+    http://github.com/urajat/python-disqus
     
-Author:
-    Devin Naquin, dnaquin@gmail.com
+Authors:
+    Rajat Upadhyaya, urajat@gmail.com
+    Partly based on Devin Naquin's 'python-disqus' at http://github.com/devin/python-disqus
+

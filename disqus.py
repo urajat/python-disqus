@@ -29,7 +29,7 @@ class ApiError(Exception):
 class Api:
     """ 
         Encapsulates Disqus API methods 
-	API docs at http://disqus.com/docs/api/
+        API docs at http://disqus.com/docs/api/
     """
 
     # Base path for API methods
@@ -44,10 +44,10 @@ class Api:
     def invoke(self, name, args={}, type='GET'):
         method_url = self.URL + name + '/'
 
-	if name in ['get_forum_list', 'get_forum_api_key']:
-	    args['user_api_key'] = self.user_key
-	else:
-	    args['forum_api_key'] = self.forum_key
+        if name in ['get_forum_list', 'get_forum_api_key']:
+            args['user_api_key'] = self.user_key
+        else:
+            args['forum_api_key'] = self.forum_key
        	data = urllib.urlencode(args)
 
         try:
@@ -62,36 +62,36 @@ class Api:
             elif hasattr(e, 'code'):
                 print 'HTTP Error %d: %s' % (e.code, BaseHTTPRequestHandler.responses[e.code])
             else:
-	        print 'IO Error: %s' % e
+                print 'IO Error: %s' % e
             return False
 
         r = json.load(response)
-	if r['succeeded']:
-	    return r['message']
+        if r['succeeded']:
+            return r['message']
 	
-	raise ApiError(r['code'], r['message'])
+        raise ApiError(r['code'], r['message'])
 
     # GET methods
     def get_forum_list(self):
         response = self.invoke('get_forum_list')
 
-	# Assumes single forum
-	return response[0]
+        # Assumes single forum
+        return response[0]
 
     def get_forum_api_key(self, forum_id):
         return self.invoke('get_forum_api_key', { 'forum_id': forum_id })
 
     def get_thread_list(self):
-	return self.invoke('get_thread_list')
+        return self.invoke('get_thread_list')
 
     def get_num_posts(self, thread_list):
-	return self.invoke('get_num_posts', { 'thread_ids': ','.join(thread_list) })
+        return self.invoke('get_num_posts', { 'thread_ids': ','.join(thread_list) })
 
     def get_thread_by_url(self, url):
-	return self.invoke('get_thread_by_url', { 'url': url })
+        return self.invoke('get_thread_by_url', { 'url': url })
 
     def get_thread_posts(self, thread_id):
-	return self.invoke('get_thread_posts', { 'thread_id': thread_id })
+        return self.invoke('get_thread_posts', { 'thread_id': thread_id })
 
     # POST methods
     def create_post(self, attributes):
@@ -112,7 +112,7 @@ class Forum:
     
     def __init__(self, attributes):
         for k, v in attributes.iteritems():
-	    if k in self.FIELDS:
+            if k in self.FIELDS:
                 setattr(self, k, v)
 
 
@@ -121,7 +121,7 @@ class Thread:
     
     def __init__(self, attributes):
         for k, v in attributes.iteritems():
-	    if k in self.FIELDS:
+            if k in self.FIELDS:
                 setattr(self, k, v)
 
 
@@ -131,7 +131,7 @@ class Post:
     
     def __init__(self, attributes):
         for k, v in attributes.iteritems():
-	    if k in self.FIELDS:
+            if k in self.FIELDS:
                 setattr(self, k, v)
 
 

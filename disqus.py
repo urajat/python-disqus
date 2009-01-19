@@ -27,7 +27,7 @@ class ApiError(Exception):
 
 
 class Api:
-    """ 
+    """
         Encapsulates Disqus API methods 
         API docs at http://disqus.com/docs/api/
     """
@@ -48,7 +48,7 @@ class Api:
             args['user_api_key'] = self.user_key
         else:
             args['forum_api_key'] = self.forum_key
-       	data = urllib.urlencode(args)
+        data = urllib.urlencode(args)
 
         try:
             if type == 'GET':
@@ -68,7 +68,7 @@ class Api:
         r = json.load(response)
         if r['succeeded']:
             return r['message']
-	
+
         raise ApiError(r['code'], r['message'])
 
     # GET methods
@@ -118,7 +118,7 @@ class Forum:
 
 class Thread:
     FIELDS = ['id', 'forum', 'slug', 'title', 'created_at', 'allow_comments', 'url', 'identifier']
-    
+
     def __init__(self, attributes):
         for k, v in attributes.iteritems():
             if k in self.FIELDS:
@@ -128,7 +128,7 @@ class Thread:
 class Post:
     FIELDS = ['id', 'forum', 'thread', 'created_at', 'message', 'parent_post', 'shown', 'is_anonymous', 
                'anonymous_author', 'author']
-    
+
     def __init__(self, attributes):
         for k, v in attributes.iteritems():
             if k in self.FIELDS:

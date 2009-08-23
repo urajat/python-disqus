@@ -38,14 +38,15 @@ class Api:
     # Base path for API methods
     URL = 'http://disqus.com/api/'
 
-    def __init__(self, user_key):
+    def __init__(self, user_key, version = '1.0'):
         self.user_key = user_key
+        self.version = version
 
     def set_forum_key(self, forum_key):
         self.forum_key = forum_key
 
     def invoke(self, name, args={}, type='GET'):
-        method_url = self.URL + name + '/'
+        method_url = self.URL + name
 
         if name in ['get_forum_list', 'get_forum_api_key']:
             args['user_api_key'] = self.user_key
@@ -57,7 +58,7 @@ class Api:
             if type == 'GET':
                 response = urllib2.urlopen(method_url + '?' + data)
             else:
-                req = urllib2.Request(method_url, data)
+                req = urllib2.Request(method_url + '/', data)
                 response = urllib2.urlopen(req)
         except IOError, e:
             if hasattr(e, 'reason'):

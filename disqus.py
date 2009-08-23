@@ -10,8 +10,11 @@
 import sys
 import urllib, urllib2
 
-# Python 2.6 or greater
-import json
+try:
+    # Python 2.6 or greater
+    import json
+except ImportError:
+    import simplejson as json
 
 from BaseHTTPServer import BaseHTTPRequestHandler
 
@@ -29,7 +32,7 @@ class ApiError(Exception):
 class Api:
     """
         Encapsulates Disqus API methods 
-        API docs at http://disqus.com/docs/api/
+        API docs at http://wiki.disqus.net/API
     """
 
     # Base path for API methods

@@ -1,10 +1,12 @@
 python-disqus
 
 Description:
-    A Python interface to the DISQUS API.
+    A Python interface to the DISQUS API (http://wiki.disqus.net/API)
 
 Dependencies:
-    Python 2.6 or greater (for json)
+    'json' module (Python 2.6 and above)
+               OR
+    'simplejson' module (Python 2.4+)
 
 More information:
     http://github.com/urajat/python-disqus

@@ -38,20 +38,55 @@ class Api:
     # Base path for API methods
     URL = 'http://disqus.com/api/'
 
-    def __init__(self, user_key, version = '1.0'):
-        self.user_key = user_key
-        self.version = version
+    # Supported API versions
+    __VERSIONS = ['1.0', '1.1']
 
+    # For v1.1 use
+    __forum_key_methods = ['create_post', 'thread_by_identifier', 'update_thread']
+
+    # For v1.0 use
+    __user_key_methods = ['get_forum_list', 'get_forum_api_key']
+
+
+    def __init__(self, user_key, version='1.1'):
+        self.user_key = user_key
+
+        if version in self.__VERSIONS:
+            self.version = version
+        else:
+            raise ApiError('VersionError', 'Version %s is unsupported'
+                           %(version)) 
+
+        if version == '1.1':
+            self.user_name = self.invoke('get_user_name', {}, type='POST')
+
+
+    def load_forums(self):
+        self.forums = self.get_forum_list()
+        for f in self.forums:
+            f['api_key'] = self.get_forum_api_key(f['id'])
+ 
     def set_forum_key(self, forum_key):
         self.forum_key = forum_key
 
-    def invoke(self, name, args={}, type='GET'):
+    def invoke(self, name, args=None, type='GET'):
+        if args is None:
+            args = {}
         method_url = self.URL + name
 
-        if name in ['get_forum_list', 'get_forum_api_key']:
-            args['user_api_key'] = self.user_key
-        else:
-            args['forum_api_key'] = self.forum_key
+        args['api_version'] = self.version
+
+        if self.version == '1.1':
+            if name in self.__forum_key_methods:
+                args['forum_api_key'] = self.forum_key
+            else:
+                args['user_api_key'] = self.user_key
+        elif self.version == '1.0':
+            if name in self.__user_key_methods:
+                args['user_api_key'] = self.user_key
+            else:
+                args['forum_api_key'] = self.forum_key
+
         data = urllib.urlencode(args)
 
         try:
@@ -77,10 +112,7 @@ class Api:
 
     # GET methods
     def get_forum_list(self):
-        response = self.invoke('get_forum_list')
-
-        # Assumes single forum
-        return response[0]
+        return self.invoke('get_forum_list')
 
     def get_forum_api_key(self, forum_id):
         return self.invoke('get_forum_api_key', { 'forum_id': forum_id })
@@ -97,6 +129,7 @@ class Api:
     def get_thread_posts(self, thread_id):
         return self.invoke('get_thread_posts', { 'thread_id': thread_id })
 
+
     # POST methods
     def create_post(self, attributes):
         return self.invoke('create_post', attributes, type='POST')
@@ -110,97 +143,53 @@ class Api:
         attributes['thread_id'] = thread_id
         return self.invoke('update_thread', attributes, type='POST')
 
+    # v1.1 only methods
+    def get_user_name(self):
+        if self.version == '1.1':
+            return self.invoke('get_user_name', {}, type='POST')
+        
+        raise ApiError('get_user_name', 'Unsupported in API v1.0')
+
+    def moderate_post(self):
+        if self.version == '1.1':
+            raise ApiError('moderate_post', 'Unimplemented method')
+        
+        raise ApiError('get_user_name', 'Unsupported in API v1.0')
+
+    def get_updated_threads(self):
+        if self.version == '1.1':
+            raise ApiError('get_updated_threads', 'Unimplemented method')
+        
+        raise ApiError('get_user_name', 'Unsupported in API v1.0')
+
+    def get_forum_posts(self):
+        if self.version == '1.1':
+            raise ApiError('get_forum_posts', 'Unimplemented method')
+        
+        raise ApiError('get_user_name', 'Unsupported in API v1.0')
+
 
 class Forum:
-    FIELDS = ['id', 'shortname', 'name']
+#    FIELDS = ['id', 'shortname', 'name', 'created_at']
     
     def __init__(self, attributes):
         for k, v in attributes.iteritems():
-            if k in self.FIELDS:
-                setattr(self, k, v)
+            setattr(self, k, v)
 
 
 class Thread:
-    FIELDS = ['id', 'forum', 'slug', 'title', 'created_at', 'allow_comments', 'url', 'identifier']
+#    FIELDS = ['id', 'forum', 'slug', 'title', 'created_at', 'allow_comments', 'url', 'identifier']
 
     def __init__(self, attributes):
         for k, v in attributes.iteritems():
-            if k in self.FIELDS:
-                setattr(self, k, v)
+            setattr(self, k, v)
 
 
 class Post:
-    FIELDS = ['id', 'forum', 'thread', 'created_at', 'message', 'parent_post', 'shown', 'is_anonymous', 
-               'anonymous_author', 'author']
+#    FIELDS = ['id', 'forum', 'thread', 'created_at', 'message', 'parent_post', 'shown', 'is_anonymous', 'anonymous_author', 'author']
 
     def __init__(self, attributes):
         for k, v in attributes.iteritems():
-            if k in self.FIELDS:
-                setattr(self, k, v)
+            setattr(self, k, v)
 
-
-if __name__ == '__main__':
-    if len(sys.argv) == 1:
-        print "ERROR: User key not supplied"
-        print "Usage: %s <user_key>" % sys.argv[0]
-        sys.exit(1)
-
-    api = Api(sys.argv[1])
-    f = api.get_forum_list()
-    print f
-    print "Forum id = " + f['id']
-#    f = Forum(t)
-
-    fk = api.get_forum_api_key(f['id'])
-    print "Forum key = " + fk
-    api.set_forum_key(fk)
-
-"""
-    Examples:
-    ---------
-#   Get all threads associated with the forum
-    threads = api.get_thread_list()
-    print json.dumps(threads, sort_keys=True, indent=4)
-#    threads = [Thread(t) for t in api.get_thread_list()]
-
-#   Get the number of posts for each thread whose id is specified
-    t = api.get_num_posts(['1234567', '7654321'])
-    print t
-
-#   Get a thread by its URL and update various fields
-#    t = api.get_thread_by_url('http://example.com/some/path/')
-    print t
-    t = api.update_thread(t['id'], 
-                          {
-			   'title'         : 'Some title here',
-			   'slug'          : 'some_slug_here',
-			   'url'           : 'http://example.com/path/',
-			   'allow_comments': 0                             # 0 or 1
-			  })
-    print t
-
-#   Get all posts with the given 'id'
-    t = api.get_thread_posts(t['id'])
-    print json.dumps(t, sort_keys=True, indent=4)
-#    posts = [Post(p) for p in api.get_thread_posts('1234567')]
-
-#   Attach a post as a reply to another post
-    m = {'author_name' : 'Me', 
-         'author_email': 'me@example.com',
-         'author_url'  : 'http://example.com/',
-         'ip_address'  : '192.168.1.1'}
-    t = api.get_thread_posts(t['id'])
-    parent = t[4]
-    th = t[1]
-    m['thread_id']   = th['thread']
-    m['message']     = th['message']
-    m['created_at']  = th['created_at']
-    m['parent_post'] = parent['id']
-    r = api.create_post(m)
-    print r
-
-#   Get a thread by its identifier or create a thread with the given identifier
-    t = api.thread_by_identifier('Some identifier here', 'Optional title here')
-    print t
-"""
 
